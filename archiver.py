@@ -173,8 +173,11 @@ def get_info(courses):
 
     return data
 
+def check_if_first_run():
+    curse.execute('SELECT COUNT(*) FROM course')
+    return curse.fetchone()[0] == 0
 
-def ingest(term, courses):
+def ingest(term, courses, first_run=False):
     for course in courses:
         course_code = course['name']
         course_section = course['section']
@@ -188,6 +191,9 @@ def ingest(term, courses):
             curse.execute('INSERT INTO course VALUES (?, ?, ?, ?)', (term, course_code, course_section, total_seats))
             curse.execute('INSERT INTO seat (term, course_code, course_section, available_seats) VALUES (?, ?, ?, ?)', (term, course_code, course_section, available_seats))
 
+            if not first_run:
+                curse.execute('INSERT INTO course_update (term, course_code, course_section) VALUES (?, ?, ?)', (term, course_code, course_section))
+
     conn.commit()
 
 
@@ -195,12 +201,12 @@ def ingest(term, courses):
 def ingest_terms():
     
     terms = ['2024FA', '2024SU']
-    
+    first_run = check_if_first_run()
     for term in terms:
         logger.info(f'Ingesting term {term}')
         sourp = course_soup(term)
         course_info = get_info(sourp)
-        ingest(term, course_info)
+        ingest(term, course_info, first_run)
         logger.info(f'Ingested term {term}')
 
 

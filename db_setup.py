@@ -30,6 +30,17 @@ def create_db():
     ''')
 
     c.execute('''
+        CREATE TABLE IF NOT EXISTS course_update (
+            term TEXT NOT NULL,
+            course_code TEXT NOT NULL,
+            course_section TEXT NOT NULL,
+            ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY(term, course_code, course_section),
+            FOREIGN KEY(term, course_code, course_section) REFERENCES course(term, course_code, course_section)
+        )
+    ''')
+
+    c.execute('''
         CREATE INDEX IF NOT EXISTS idx_course ON course(course_code, course_section)
     ''')
 
