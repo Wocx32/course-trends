@@ -1,0 +1,4 @@
+requests
+beautifulsoup4
+rocketry
+pydantic==1.10.10
