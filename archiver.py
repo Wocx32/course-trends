@@ -197,7 +197,7 @@ def ingest(term, courses, first_run=False):
     conn.commit()
 
 
-@app.task(time_of_month.between(3, 28) & every('5 minutes'))
+@app.task(time_of_month.between(3, 29) & every('5 minutes'))
 def ingest_terms():
     
     terms = ['2024FA', '2024SU']
